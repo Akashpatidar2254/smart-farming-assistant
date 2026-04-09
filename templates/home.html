@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Farming Assistant</title>
+
+    <!-- CSS file -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+
+
+    <!-- ===== NAVBAR ===== -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <h2 class="logo">🌱 Smart Farming</h2>
+
+            <div class="nav-buttons">
+                <a href="/dashboard">
+    <button class="btn">Dashboard</button>
+</a>
+                <button class="btn">Login</button>
+                <button class="btn">Signup</button>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Smart Farming Assistant 🌱</h1>
+            <p>Make data-driven farming decisions using soil & weather insights</p>
+            <button class="btn">Get Started</button>
+        </div>
+    </section>
+
+
+    <!-- ===== WEATHER SECTION ===== -->
+<section class="weather">
+  <div class="container">
+
+    <!-- Title -->
+    <h2>🌦 Live Weather</h2>
+
+    <!-- City -->
+    <h3 id="city">Bhopal (Demo)</h3>
+
+    <!-- BIG ICON -->
+    <div class="main-weather-icon">
+      <i id="weatherIcon" class="fas fa-sun"></i>
+    </div>
+
+    <!-- CARDS WRAPPER -->
+    <div class="weather-cards">
+
+      <div class="weather-card">
+        <i class="fas fa-thermometer-half weather-icon"></i>
+        <h4>Temperature</h4>
+        <p id="temp">28°C</p>
+      </div>
+
+      <div class="weather-card">
+        <i class="fas fa-tint weather-icon"></i>
+        <h4>Humidity</h4>
+        <p id="humidity">21%</p>
+      </div>
+
+      <div class="weather-card">
+        <i class="fas fa-cloud-rain weather-icon"></i>
+        <h4>Rain Chance</h4>
+        <p>20%</p>
+      </div>
+
+    </div>
+
+    <!-- LOCATION BUTTON -->
+    <div class="location-box">
+      <button id="locationBtn" onclick="getLocation()">
+        📍 Use My Location
+      </button>
+      <p id="status"></p>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="city-search">
+      <input 
+        type="text" 
+        id="cityInput" 
+        placeholder="Enter city..." 
+        oninput="handleTyping()"
+      >
+      <div id="suggestions"></div>
+      <button onclick="getWeatherByCity()">Search</button>
+    </div>
+
+  </div>
+</section>
+ 
+<!-- ===== later add during train_model ===== -->
+<select id="soil">
+    <option value="Sandy">Sandy</option>
+    <option value="Clay">Clay</option>
+    <option value="Loamy">Loamy</option>
+</select>
+
+<button onclick="analyzeFarm()">Analyze</button>
+
+<h3 class="crop-selected">🌾 --</h3>
+
+<div id="fertilizers"></div>
+    <!-- ===== FEATURES SECTION ===== -->
+    <section class="features">
+    <div class="container">
+        <h2>🚀 Smart Features</h2>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <div class="icon">🌱</div>
+                <h3>Crop Recommendation</h3>
+                <p>Get best crop suggestions based on soil & weather.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🌦️</div>
+                <h3>Weather Insights</h3>
+                <p>Real-time weather data for better farming decisions.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🧪</div>
+                <h3>Fertilizer Advice</h3>
+                <p>Know the right nutrients for maximum yield.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🚨</div>
+                <h3>Smart Alerts</h3>
+                <p>Get alerts about weather changes and risks.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section class="workflow">
+    <div class="container">
+        <h2>⚙️ How It Works</h2>
+
+        <div class="workflow-flow">
+
+            <div class="flow-item">
+                <div class="flow-icon">📍</div>
+                <h3>Enter Details</h3>
+                <p>Provide soil & location info</p>
+            </div>
+
+            <div class="arrow">➝</div>
+
+            <div class="flow-item">
+                <div class="flow-icon">🧠</div>
+                <h3>Smart Analysis</h3>
+                <p>AI analyzes your data</p>
+            </div>
+
+            <div class="arrow">➝</div>
+
+            <div class="flow-item">
+                <div class="flow-icon">🌾</div>
+                <h3>Get Results</h3>
+                <p>Best recommendations</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+    <!-- ===== STORY SECTION ===== -->
+    <section class="story">
+        <div class="container">
+            <h2>Built to help farmers make better decisions</h2>
+            <p>Inspired by my father's farming journey</p>
+        </div>
+    </section>
+
+
+    <!-- ===== CTA ===== -->
+    <section class="cta">
+        <div class="container">
+            <h2>Start Smart Farming Today 🌱</h2>
+            <button class="btn primary">Get Started</button>
+        </div>
+    </section>
+
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+    <div class="footer-container">
+
+        <!-- Logo & About -->
+        <div class="footer-section">
+            <h2>🌱 Smart Farming</h2>
+            <p>Helping farmers make data-driven decisions using AI & weather insights.</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Features -->
+        <div class="footer-section">
+            <h3>Features</h3>
+            <ul>
+                <li>Crop Recommendation</li>
+                <li>Weather Insights</li>
+                <li>Fertilizer Advice</li>
+                <li>Smart Alerts</li>
+            </ul>
+        </div>
+
+        <!-- Contact -->
+        <div class="footer-section">
+            <h3>Contact</h3>
+            <p>Email: support@smartfarm.com</p>
+            <p>Phone: +91 9876543210</p>
+        </div>
+
+    </div>
+
+    <!-- Bottom -->
+    <div class="footer-bottom">
+        <p>© 2026 Smart Farming Assistant | Built with ❤️</p>
+    </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<div class="auth-box">
+
+  <h3>Login</h3>
+
+  <form action="/login" method="POST">
+    <input type="text" name="username" placeholder="Username" required>
+    <input type="password" name="password" placeholder="Password" required>
+
+    <label>
+      <input type="checkbox"> Remember me
+    </label>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <h4>Signup</h4>
+
+  <form action="/signup" method="POST">
+    <input type="text" name="username" placeholder="Username" required>
+    <input type="password" name="password" placeholder="Password" required>
+
+    <button type="submit">Signup</button>
+  </form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart Farming</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="container nav-container">
+        <h2 class="logo">🌱 Smart Farming</h2>
+        <a href="/"><button class="btn">Home</button></a>
+    </div>
+</header>
+
+<section class="dashboard">
+  <div class="container">
+
+    <!-- TOP CARDS -->
+    <div class="dashboard-cards">
+
+      <div class="card weather-card">
+        <h3>Current Weather</h3>
+        <div class="weather-info">
+          <i id="weatherIcon" class="fas fa-cloud-sun"></i>
+          <div>
+            <h2 id="city">Bhopal</h2>
+            <p><span id="temp">30°C</span> Humidity: <span id="humidity">60%</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+  <h3>Temperature</h3>
+  <h2 id="tempCard">-- °C</h2>
+</div>
+
+<div class="card">
+  <h3>Humidity</h3>
+  <h2 id="humidityCard">-- %</h2>
+</div>
+
+    </div>
+
+    <!-- MAIN GRID -->
+     <h2 class="section-title">--------------• Farm Inputs •--------------</h2>
+    <div class="main-grid">
+      
+      <!-- LEFT -->
+      <div class="input-section">
+        <div class="input-row">
+    <label>State:</label>
+    <select id="state"></select>
+</div>
+
+<div class="input-row">
+    <label>District:</label>
+    <select id="district"></select>
+</div>
+
+<div class="input-row">
+    <label>Block:</label>
+    <select id="block"></select>
+</div>
+
+<div class="input-row">
+    <label>Village:</label>
+    <select id="village"></select>
+</div>
+
+<div class="input-row">
+  <label>Temperature (°C):</label>
+  <input type="number" id="tempInput" placeholder="e.g. 25">
+</div>
+
+<div class="input-row">
+  <label>Humidity (%):</label>
+  <input type="number" id="humidityInput" placeholder="e.g. 60">
+</div>
+        
+
+
+        <div class="input-row">
+          <label>Soil Type:</label>
+          <select id="soil">
+            <option>Sandy Soil</option>
+            <option>Clay Soil</option>
+            <option>Loamy Soil</option>
+          </select>
+        </div>
+
+        <div class="input-row">
+          <label>Crop Season:</label>
+          <select id="season">
+            <option>Kharif</option>
+            <option>Rabi</option>
+          </select>
+        </div>
+
+        <div class="input-row">
+          <label>Water Availability:</label>
+          <select id="water">
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+          </select>
+        </div>
+
+        <button class="analyze-btn" onclick="analyzeFarm()">Analyze</button>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div class="insight-section">
+  <h3 class="insight-title">🌿 Smart Insights</h3>
+
+  <div class="insight-item">
+    <span>🌱 Soil Health</span>
+    <b id="soilHealth" class="good">--</b>
+  </div>
+
+  <div class="insight-item">
+    <span>🌧 Rain Prediction</span>
+    <b id="rainPrediction" class="moderate">--</b>
+  </div>
+
+  <div class="insight-item">
+    <span>📈 Yield Estimate</span>
+    <b id="yieldEstimate" class="high">--</b>
+  </div>
+</div>
+
+    
+
+    <!-- BOTTOM -->
+    <div class="bottom-grid">
+
+      <!-- CROPS -->
+      <div class="crop-box">
+  <h3>Recommended Crops</h3>
+
+  <div class="crop-dropdown">
+
+    <div class="crop-selected" onclick="toggleDropdown()">
+      🌾 Select Crop ▼
+    </div>
+
+    <div id="cropOptions" class="crop-options"></div>
+
+  </div>
+</div>
+
+      <!-- FERTILIZER -->
+      <div class="fertilizer-box">
+        <h3>Fertilizer Suggestions</h3>
+        <div id="fertilizers" class="fertilizer-grid">
+          
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<footer class="footer">
+  <p>© 2026 Smart Farming Assistant 🌱 | Built with AI</p>
+</footer>
+
+
+</body>
+</html>
