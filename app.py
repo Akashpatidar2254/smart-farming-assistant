@@ -59,8 +59,13 @@ class SoilData(db.Model):
 
 
 # Create the tables in PostgreSQL
+# Around line 63 in your app.py
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+        print("Database tables verified/created.")
+    except Exception as e:
+        print(f"Database connection skipped or failed: {e}")
 
 
 # --- DATABASE LOADING ---
