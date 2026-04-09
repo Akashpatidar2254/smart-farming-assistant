@@ -126,46 +126,25 @@ function getWeatherIcon(condition) {
 }
 //=== update UI ===
 function updateUI(data) {
-
-    // ===== SAFETY CHECK =====
     if (!data) return;
 
     const temp = data.temp ?? "--";
     const humidity = data.humidity ?? "--";
-    const city = data.city && data.city !== "" ? data.city : "Unknown Location";
+    const city = data.city || "Unknown Location";
 
-    // ===== MAIN WEATHER CARD =====
-    document.getElementById("temp").innerText = temp + "°C";
-    document.getElementById("humidity").innerText = humidity + "%";
-    document.getElementById("city").innerText = city;
+    // Matches id="temp", id="humidity", and id="city-name" in dashboard.html
+    const tempEl = document.getElementById("temp");
+    const humEl = document.getElementById("humidity");
+    const cityEl = document.getElementById("city-name") || document.getElementById("city");
 
-    // ===== WEATHER ICON =====
-    if (data.condition) {
+    if (tempEl) tempEl.innerText = temp + "°C";
+    if (humEl) humEl.innerText = humidity + "%";
+    if (cityEl) cityEl.innerText = city;
+
+    if (data.condition && document.getElementById("weatherIcon")) {
         const iconClass = getWeatherIcon(data.condition);
         document.getElementById("weatherIcon").className = "fas " + iconClass;
     }
-
-    // ===== TEMPERATURE CARD =====
-    const tempCard = document.getElementById("tempCard");
-    if (tempCard) {
-        tempCard.innerText = temp + "°C";
-    }
-
-    // ===== HUMIDITY CARD =====
-    const humidityCard = document.getElementById("humidityCard");
-    if (humidityCard) {
-        humidityCard.innerText = humidity + "%";
-    }
-
-    // ===== AUTO-FILL INPUTS =====
-    const tempInput = document.getElementById("tempInput");
-    const humidityInput = document.getElementById("humidityInput");
-
-    if (tempInput) tempInput.value = temp;
-    if (humidityInput) humidityInput.value = humidity;
-
-    // ===== DEBUG (OPTIONAL) =====
-    console.log("Updated UI:", { temp, humidity, city });
 }
 
 // ===== ERROR =====
@@ -185,53 +164,111 @@ function toggleDropdown() {
     options.style.display = options.style.display === "block" ? "none" : "block";
 }
 
-
+// ==========================================
+// 3. EXPERT SYSTEM PREDICTION LOGIC
+// ==========================================
 
 function getCropPrediction() {
-    console.log("Calling API...");
-    const district = document.getElementById("district").value;
-    const temp = document.getElementById("tempInput").value;
-    const humidity = document.getElementById("humidityInput").value;
-    if (!temp || !humidity) {
-    alert("Please enter temperature and humidity");
-    return;
-}   
-    
-    const state = document.getElementById("state").value;
-const block = document.getElementById("block").value;
-const village = document.getElementById("village").value;
-    
-    if (!state || !district || !block || !village) {
-    alert("Please select complete location (State → District → Block → Village)");
-    return;
-}
-    fetch(`/predictCrop?state=${state}&district=${district}&block=${block}&village=${village}&temp=${temp}&humidity=${humidity}`)
-        .then(res => res.json())
-        .then(data => {
+    const district = document.getElementById('district').value;
+    const village = document.getElementById('village').value;
+    const latValue = document.getElementById('lat').value;
+    const lonValue = document.getElementById('lon').value;
 
-    console.log("Prediction data:", data);
-    console.log("Response received:", data);
-    if (data.error) {
-        alert(data.error);
+    const resultDiv = document.getElementById('prediction-result');
+
+    // 1. Validation: Ensure user has selected the village
+    if (!village || !district) {
+        alert("Please select both District and Village to proceed.");
         return;
     }
 
-    // 🌾 SHOW ALL CROPS IN DROPDOWN (🔥 NEW)
-    showCrops(data.crops);
+    // 2. UI Loader: Feedback that the DB is being queried
+    resultDiv.innerHTML = `
+        <div class="spinner-container" style="text-align:center; padding:20px;">
+            <div class="spinner"></div>
+            <p style="color:#28a745; font-weight:600; margin-top:10px;">
+                <i class="fas fa-database"></i> Querying Soil Intelligence...
+            </p>
+        </div>
+    `;
 
-    // 🌾 AUTO-SELECT TOP CROP
-    if (data.crops && data.crops.length > 0) {
-        document.querySelector(".crop-selected").innerText =
-            `🌾 ${data.crops[0].name} (${data.crops[0].prob}%)`;
-    }
+    // 3. Fetch Request to Flask Backend
+    fetch('/predictCrop', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            district: district,
+            village: village,
+            // Ensure values are numbers for PostgreSQL compatibility
+            lat: parseFloat(latValue) || 23.25,
+            lon: parseFloat(lonValue) || 77.41 
+        }),
+    })
+    .then(async response => {
+        const data = await response.json();
+        // If the server returns 404 or 500, trigger the .catch()
+        if (!response.ok) {
+            throw new Error(data.error || "Server error occurred");
+        }
+        return data;
+    })
+    .then(data => {
+        resultDiv.innerHTML = ""; // Clear loader
 
-    // 🌿 INSIGHTS
-    updateInsights(data);
+        // Case A: No specific crop matched (even with tolerance)
+        if (data.message) {
+            resultDiv.innerHTML = `
+                <div class="alert-warning" style="background:#fff3cd; padding:20px; border-radius:10px; border-left:5px solid #ffc107;">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Recommendation Note</h3>
+                    <p>${data.message}</p>
+                </div>`;
+            return;
+        }
 
-    // 🧪 FERTILIZERS
-    showFertilizers(data.fertilizers);
-});
+        // Case B: Success - Build Results Grid
+        let htmlOutput = `
+            <h2 style="text-align:center; margin-bottom:25px; color:#2c3e50;">
+                <i class="fas fa-leaf"></i> Optimal Crops for Your Land
+            </h2>
+            <div class="crop-grid">
+        `;
+
+        data.forEach(item => {
+            htmlOutput += `
+                <div class="crop-card">
+                    <div class="crop-header">
+                        <span class="crop-name">${item.crop}</span>
+                        <span class="confidence-badge">${item.confidence}% Match</span>
+                    </div>
+                    <div class="crop-body">
+                        <p><i class="fas fa-calendar-alt"></i> Season: <strong>${item.season}</strong></p>
+                        <span class="reason-text"><i class="fas fa-info-circle"></i> ${item.reason}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        htmlOutput += `</div>`;
+        resultDiv.innerHTML = htmlOutput;
+    })
+    .catch(error => {
+        console.error('Prediction Error:', error);
+        // Display specific error message from the backend
+        resultDiv.innerHTML = `
+            <div style="text-align:center; color:#d9534f; padding:20px; border:1px dashed #d9534f; border-radius:10px;">
+                <i class="fas fa-server" style="font-size:2rem;"></i>
+                <p><strong>Failed to get prediction:</strong> ${error.message}</p>
+                <small>Check if the selected village exists in the database.</small>
+            </div>`;
+    });
 }
+
+
+
+
+
 function analyzeFarm() {
     console.log("Analyze clicked");
     getCropPrediction();
@@ -475,4 +512,21 @@ function showCrops(crops) {
 
         container.appendChild(div);
     });
+}
+
+function updateWeatherByGPS() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            
+            // Update hidden inputs
+            document.getElementById('lat').value = lat;
+            document.getElementById('lon').value = lon;
+            
+            fetch(`/weather?lat=${lat}&lon=${lon}`)
+                .then(res => res.json())
+                .then(data => updateUI(data));
+        });
+    }
 }

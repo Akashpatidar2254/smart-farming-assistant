@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Smart Farming</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-glass-card">
+            
+            <div class="auth-nav-top">
+                <a href="{{ url_for('home') }}" class="home-link">
+                    <i class="fas fa-arrow-left"></i> Home
+                </a>
+            </div>
+
+            <div class="auth-header">
+                <div class="auth-logo"><i class="fas fa-user-plus"></i></div>
+                <h2>Join the Community</h2>
+                <p>Sign up to start your smart farming journey</p>
+            </div>
+
+            <form action="/signup" method="POST" class="auth-form">
+                <div class="input-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" name="name" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="input-group">
+                    <label><i class="fas fa-lock"></i> Create Password</label>
+                    <input type="password" name="password" placeholder="Minimum 6 characters" required>
+                </div>
+
+                <button type="submit" class="auth-btn">
+                    Create Account <i class="fas fa-check-circle"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="/login">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

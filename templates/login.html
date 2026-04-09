@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Farming</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-glass-card">
+    <div class="auth-nav-top">
+        <a href="{{ url_for('home') }}" class="home-link">
+            <i class="fas fa-arrow-left"></i> Home
+        </a>
+    </div>
+
+    <div class="auth-header">
+        <div class="auth-logo"><i class="fas fa-seedling"></i></div>
+        <h2>Welcome Back</h2>
+        <p>Login to access your farm insights</p>
+    </div>
+    
+    <form action="/login" method="POST" class="auth-form">
+        <div class="input-group">
+            <label><i class="fas fa-envelope"></i> Email Address</label>
+            <input type="email" name="email" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="input-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+        </div>
+
+        <button type="submit" class="auth-btn">
+            Login to Dashboard <i class="fas fa-arrow-right"></i>
+        </button>
+    </form>
+
+    <div class="auth-footer">
+        <p>New farmer? <a href="/signup">Create an account</a></p>
+    </div>
+</div>
+    </div>
+</body>
+</html>

@@ -22,8 +22,13 @@
                 <a href="/dashboard">
     <button class="btn">Dashboard</button>
 </a>
-                <button class="btn">Login</button>
-                <button class="btn">Signup</button>
+                <a href="{{ url_for('login') }}">
+        <button class="btn btn-primary">Login</button>
+    </a>
+
+    <a href="{{ url_for('signup') }}">
+        <button class="btn btn-secondary">Sign Up</button>
+    </a>
             </div>
         </div>
     </header>
